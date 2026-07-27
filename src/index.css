@@ -1,0 +1,726 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Color — night desk lit by monitor glow */
+  --bg: #0b0f14;
+  --surface: #121820;
+  --surface-raised: #1a222c;
+  --line: #2b3541;
+  --text: #e7ecef;
+  --text-muted: #7c8894;
+  --accent-cool: #5ec8d8;   /* monitor glow */
+  --accent-warm: #e8935b;   /* desk lamp */
+
+  /* Type */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(1200px 600px at 12% -8%, rgba(94, 200, 216, 0.10), transparent 55%),
+    radial-gradient(900px 600px at 92% 4%, rgba(232, 147, 91, 0.08), transparent 55%),
+    var(--bg);
+  color: var(--text);
+}
+
+body {
+  font-family: var(--font-body);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+a { color: inherit; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-cool);
+}
+
+::selection {
+  background: var(--accent-cool);
+  color: var(--bg);
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-cool);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Scrollbar temático (Firefox + WebKit) para paneles con overflow-y */
+.hud-screen-body,
+.side-nav-links {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.hud-screen-body::-webkit-scrollbar,
+.side-nav-links::-webkit-scrollbar {
+  width: 8px;
+}
+.hud-screen-body::-webkit-scrollbar-track,
+.side-nav-links::-webkit-scrollbar-track {
+  background: transparent;
+}
+.hud-screen-body::-webkit-scrollbar-thumb,
+.side-nav-links::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 999px;
+}
+.hud-screen-body::-webkit-scrollbar-thumb:hover,
+.side-nav-links::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cool);
+}
+
+/* ---------- Hero / Canvas ---------- */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 560px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: clamp(20px, 5vw, 56px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hero-overlay h1 {
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+  margin-top: 8px;
+  max-width: 14ch;
+  background: linear-gradient(120deg, var(--text) 40%, var(--accent-cool) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-hint {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: right;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.loading-label {
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* Crédito del modelo 3D (CC BY 4.0) — discreto pero siempre visible */
+.model-credit {
+  position: fixed;
+  bottom: 10px;
+  left: 18px;
+  z-index: 3;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  opacity: 0.75;
+  transition: opacity 0.15s ease, color 0.15s ease;
+}
+.model-credit:hover {
+  opacity: 1;
+  color: var(--accent-cool);
+}
+@media (max-width: 640px) {
+  .model-credit { left: 12px; font-size: 0.6rem; max-width: 62vw; }
+}
+
+/* ---------- Side nav (drawer over the 3D scene) ---------- */
+.side-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  pointer-events: none;
+}
+
+.side-nav-tab {
+  pointer-events: auto;
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 21;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-size: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.side-nav-tab:hover {
+  border-color: var(--accent-cool);
+  color: var(--accent-cool);
+}
+
+.side-nav-links {
+  pointer-events: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 220px;
+  height: 100%;
+  background: rgba(18, 24, 32, 0.95);
+  backdrop-filter: blur(6px);
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 80px 18px 24px;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  overflow: hidden;
+}
+
+.side-nav--open .side-nav-links {
+  transform: translateX(0);
+}
+
+.side-nav-brand {
+  font-family: var(--font-display);
+  color: var(--accent-cool);
+  margin-bottom: 12px;
+}
+
+.side-nav-links button {
+  position: relative;
+  background: none;
+  border: none;
+  border-left: 2px solid transparent;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 10px 8px 10px 10px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.side-nav-links button:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.side-nav-links button.is-active {
+  color: var(--accent-cool);
+  background: rgba(94, 200, 216, 0.08);
+  border-left-color: var(--accent-cool);
+}
+
+/*
+ * ---------- Panel de contenido (antes "HUD") ----------
+ * Ya no busca verse como una interfaz de ciencia ficción (sin bordes
+ * brillantes, sin esquinitas de escáner, sin glow). La idea es que, al
+ * abrir una sección, se sienta como entrar a una página normal: una
+ * tarjeta con tipografía prolija, un encabezado simple y contenido con
+ * el mismo tipo de estructura que usaría cualquier sitio de portafolio
+ * (chips de tecnologías, tarjetas de proyecto, etc.) — no una pantalla
+ * de HUD futurista. Sin barra de "navegador" ni buscador: es contenido,
+ * no una ventana simulando ser otra página.
+ */
+.hud-screen {
+  position: relative;
+  background: linear-gradient(165deg, var(--surface-raised) 0%, var(--surface) 45%);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 2px 0 rgba(255, 255, 255, 0.03) inset;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--text);
+}
+
+.hud-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-cool), var(--accent-warm), transparent);
+  opacity: 0.6;
+}
+
+.hud-screen-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+  flex-shrink: 0;
+}
+.hud-screen-bar h3 {
+  font-size: 1.15rem;
+  color: var(--text);
+}
+.hud-screen-bar .eyebrow {
+  display: block;
+  margin-bottom: 2px;
+}
+.hud-screen-close {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.hud-screen-close:hover {
+  color: var(--text);
+  border-color: var(--accent-cool);
+}
+
+.hud-screen-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 22px;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+.hud-screen-body p { margin: 0 0 12px; }
+.hud-screen-body p:last-child { margin-bottom: 0; }
+
+/* "Sobre mí": retrato + texto, como en el sitio de referencia */
+.panel-about {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 18px;
+  border-radius: 14px;
+  background: linear-gradient(160deg, rgba(94, 200, 216, 0.06), transparent 60%);
+  border: 1px solid var(--line);
+}
+.panel-portrait {
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid rgba(94, 200, 216, 0.55);
+  box-shadow:
+    0 0 0 4px rgba(94, 200, 216, 0.08),
+    0 12px 24px rgba(0, 0, 0, 0.35);
+}
+.panel-about p { color: var(--text-muted); }
+.panel-about p:first-of-type { color: var(--text); }
+@media (max-width: 480px) {
+  .panel-about { flex-direction: column; align-items: center; text-align: center; }
+}
+
+/* Chips de tecnologías, tipo "Java JavaScript C#" del sitio de referencia */
+.panel-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.panel-list li {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text);
+  background: linear-gradient(165deg, var(--surface-raised), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 12px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+
+/* Tarjetas de proyecto */
+.panel-projects {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.panel-project-card {
+  position: relative;
+  background: linear-gradient(160deg, var(--surface-raised) 0%, var(--surface) 70%);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 18px 16px 22px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.panel-project-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent-cool), var(--accent-warm));
+  opacity: 0.75;
+}
+.panel-project-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(94, 200, 216, 0.35);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.3);
+}
+.panel-project-card h4 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+.panel-project-card p {
+  font-size: 0.85rem;
+  margin: 0 0 10px;
+}
+.panel-project-card .panel-list { margin-bottom: 10px; }
+.panel-project-card a {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--accent-cool);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+.panel-project-card a:hover { border-bottom-color: var(--accent-cool); }
+
+.panel-project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(94, 200, 216, 0.1);
+  border: 1px solid rgba(94, 200, 216, 0.3) !important;
+}
+.panel-project-link:hover {
+  background: rgba(94, 200, 216, 0.18);
+  border-color: var(--accent-cool) !important;
+}
+
+/* "Sobre mí": grilla de datos rápidos (ubicación, idiomas, estudios...) */
+.info-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: linear-gradient(160deg, var(--surface-raised), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 14px;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.info-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(94, 200, 216, 0.35);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+.info-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-cool);
+}
+.info-value {
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+/* Contacto: botones de redirección + formulario de mensaje directo */
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 460px;
+}
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: var(--text);
+  background: linear-gradient(160deg, var(--surface-raised), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.contact-link:hover {
+  transform: translateX(3px);
+  border-color: rgba(94, 200, 216, 0.4);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
+.contact-link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  color: var(--accent-cool);
+  background: rgba(94, 200, 216, 0.1);
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.contact-link:hover .contact-link-icon {
+  background: rgba(94, 200, 216, 0.2);
+  box-shadow: 0 0 0 4px rgba(94, 200, 216, 0.08);
+}
+.contact-link-label {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+}
+.contact-link-value {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.contact-form-lead {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 4px 0 -2px;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: linear-gradient(160deg, var(--surface-raised), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-field label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.form-field input,
+.form-field textarea {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  resize: vertical;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--accent-cool);
+  box-shadow: 0 0 0 3px rgba(94, 200, 216, 0.15);
+}
+
+.contact-submit {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--bg);
+  background: linear-gradient(135deg, var(--accent-cool), #7fdcea);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  box-shadow: 0 10px 24px rgba(94, 200, 216, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+.contact-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(94, 200, 216, 0.32);
+}
+.contact-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.form-status {
+  font-size: 0.82rem;
+  margin: 0;
+}
+.form-status--ok { color: var(--accent-cool); }
+.form-status--error { color: var(--accent-warm); }
+.form-status a { text-decoration: underline; }
+
+.panel-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--bg);
+  background: linear-gradient(135deg, var(--accent-warm), #f2b183);
+  font-family: var(--font-body);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  box-shadow: 0 10px 24px rgba(232, 147, 91, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.panel-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(232, 147, 91, 0.32);
+}
+
+/* ---------- Overlay de pantalla completa (3D queda de fondo) ---------- */
+.hud-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(5, 8, 10, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.hud-overlay-card {
+  width: min(640px, 100%);
+  height: auto;
+  max-height: 78vh;
+}
+
+.hud-overlay-card .hud-screen-body {
+  font-size: 0.95rem;
+  padding: 24px 26px;
+}
+
+/* Menú del monitor: grilla de accesos directos a cada sección */
+.hud-overlay-card--menu {
+  width: min(560px, 100%);
+}
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.menu-tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  color: var(--text);
+  background: linear-gradient(160deg, var(--surface-raised), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.menu-tile:hover {
+  transform: translateY(-2px);
+  border-color: rgba(94, 200, 216, 0.4);
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
+}
+.menu-tile-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  color: var(--accent-cool);
+  background: rgba(94, 200, 216, 0.1);
+}
+@media (max-width: 480px) {
+  .menu-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- Etiqueta flotante al pasar el mouse sobre un objeto interactivo ----------
+ * Único indicio de "qué es esto" ahora que los libros no se mueven al
+ * pasar el mouse — por eso es más legible/visible que antes. */
+.hover-tag {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
