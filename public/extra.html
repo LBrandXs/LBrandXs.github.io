@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Más — Portafolio</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+      :root {
+        --bg: #0b0f14;
+        --surface: #121820;
+        --surface-raised: #1a222c;
+        --line: #2b3541;
+        --text: #e7ecef;
+        --text-muted: #9aa5b1;
+        --accent-cool: #5ec8d8;
+        --accent-warm: #e8935b;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        overflow-y: auto;
+        background:
+          radial-gradient(600px 300px at 10% -10%, rgba(94, 200, 216, 0.12), transparent 60%),
+          var(--bg);
+        color: var(--text);
+        font-family: 'Inter', sans-serif;
+        line-height: 1.5;
+      }
+      /* Este documento se embebe dentro de un <iframe> anclado a la
+         pantalla del monitor 3D — el contenedor lo recorta con bordes
+         redondeados, así que el scroll tiene que vivir siempre adentro
+         de este propio documento (nunca depender del padre). */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--accent-cool); }
+      html { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+      .wrap { padding: 22px 24px 30px; max-width: 640px; margin: 0 auto; }
+      .eyebrow {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent-cool);
+        display: block;
+        margin-bottom: 8px;
+      }
+      h1 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.4rem;
+        margin: 0 0 6px;
+      }
+      .sub { color: var(--text-muted); font-size: 0.85rem; margin: 0 0 24px; }
+      .card {
+        background: linear-gradient(160deg, var(--surface-raised), var(--surface));
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px 18px;
+        margin-bottom: 14px;
+        box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+      }
+      .card h2 {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.98rem;
+        margin: 0 0 6px;
+        color: var(--accent-cool);
+      }
+      .card p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+      .tags { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 10px 0 0; }
+      .tags li {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        background: rgba(94, 200, 216, 0.1);
+        border: 1px solid rgba(94, 200, 216, 0.3);
+        border-radius: 999px;
+        padding: 4px 10px;
+      }
+      .principle {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+      .principle:last-child { margin-bottom: 0; }
+      .principle .n {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--accent-warm);
+        flex-shrink: 0;
+        padding-top: 1px;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <span class="eyebrow">Detrás de escena</span>
+      <h1>Lo que vale la pena ver</h1>
+      <p class="sub">Un par de cosas que no entran en los libros del escritorio.</p>
+
+      <div class="card">
+        <h2>Ahora mismo estoy construyendo</h2>
+        <p>
+          Criaturitas Pet Shop: la digitalización real de una veterinaria que
+          antes llevaba todo en hojas de cálculo. No es un proyecto de
+          práctica — hay una clínica de verdad usando esto, así que cada bug
+          corregido (sincronización entre finanzas e historial médico,
+          generación de PDFs, validaciones de pago) tiene efecto directo en
+          cómo trabaja alguien mañana.
+        </p>
+        <ul class="tags">
+          <li>Node.js</li>
+          <li>React</li>
+          <li>.NET</li>
+          <li>MongoDB</li>
+          <li>Docker</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>Cómo trabajo</h2>
+        <div class="principle">
+          <span class="n">01</span>
+          <p>Minimizar clics. Si algo se puede resolver sin que el usuario navegue tres pantallas, se resuelve así.</p>
+        </div>
+        <div class="principle">
+          <span class="n">02</span>
+          <p>Cero adivinar. Si una acción no es obvia, la interfaz está mal — no el usuario.</p>
+        </div>
+        <div class="principle">
+          <span class="n">03</span>
+          <p>Los bugs de integración importan más que los de UI. Un botón feo se nota; un pago mal sincronizado entre dos microservicios, no — hasta que es demasiado tarde.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Este portafolio</h2>
+        <p>
+          Está hecho con React Three Fiber sobre un modelo 3D de un
+          escritorio — cada libro es una sección real y la pantalla del
+          monitor muestra justo lo que estás leyendo ahora. Fue, básicamente,
+          otro ejercicio del mismo principio: que explorar no dependa de
+          adivinar dónde hacer clic.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

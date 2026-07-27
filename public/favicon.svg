@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <rect width="48" height="48" rx="12" fill="#0b0f14"/>
+  <rect x="1" y="1" width="46" height="46" rx="11" fill="none" stroke="#2b3541" stroke-width="1.5"/>
+  <text
+    x="24" y="25"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="'Space Grotesk', 'Arial', sans-serif"
+    font-weight="700"
+    font-size="20"
+    fill="#5ec8d8"
+    letter-spacing="-1"
+  >BX</text>
+  <circle cx="38.5" cy="10.5" r="3" fill="#e8935b"/>
+</svg>
