@@ -7,7 +7,7 @@ Experiencia, Proyectos, Contacto, CV).
 
 ## 🔗 Demo en vivo
 
-https://<tu-usuario>.github.io/
+https://LBrandXs.github.io/
 
 ## 🛠️ Stack
 
@@ -47,7 +47,7 @@ pnpm preview
 
 El sitio se despliega automáticamente en GitHub Pages con cada push a `main`
 mediante GitHub Actions (`.github/workflows/deploy.yml`). Al ser un repositorio
-tipo `<usuario>.github.io`, se publica directamente en la raíz del dominio,
+tipo `https://LBrandXs.github.io/`, se publica directamente en la raíz del dominio,
 sin necesidad de configurar un `base` en Vite.
 
 ## 🎨 Crédito obligatorio del modelo 3D
